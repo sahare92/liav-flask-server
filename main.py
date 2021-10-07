@@ -2,9 +2,10 @@ import json
 
 from flask import Flask, request
 from flask_restful import Resource, Api
+from flask_cors import cross_origin, CORS
 
 app = Flask(__name__)
-api = Api(app)
+CORS(app)
 
 USER_TO_PASSWORD = {
     'sahar': '123456',
@@ -13,35 +14,25 @@ USER_TO_PASSWORD = {
 }
 
 
-class Login(Resource):
-    # def get(self):
-    #     return {}
+@app.route('/login', methods=['POST'])
+def login():
+    response = {}
+    request_data = json.loads(request.get_data())
+    print(str(request_data))
 
-    def post(self):
-        """
-        Post will receive user credentials, and will return True response if they're ok
-        Input: {'username': <username>, 'password': <password>}
-        """
-        response = {}
-        request_data = json.loads(request.get_data())
-        print(str(request_data))
+    # TODO: implement this part (add login validation here)
+    request_username = request_data['username']
+    request_password = request_data['password']
 
-        # TODO: implement this part (add login validation here)
-        request_username = request_data['username']
-        request_password = request_data['password']
+    if USER_TO_PASSWORD[request_username] == request_password:
+        response = {'response': 'ok'}
+    else:
+        response = {'response': 'unauthorized'}
+    # TODO: END of your code
 
-        if USER_TO_PASSWORD[request_username] == request_password:
-            response = {'response': 'ok'}
-        else:
-            response = {'response': 'unauthorized'}
-        # TODO: END of your code
-
-        return response
-
-
-api.add_resource(Login, '/login')
+    return response
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=3000)
+    app.run(debug=True, port=3005)
 
